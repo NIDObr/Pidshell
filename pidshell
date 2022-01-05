@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+#------------------------------------------------------------------
+# Autor: NidoBr
+# Mais: < https://github.com/NIDObr >
+# Email: coqecoisa@gmail.com
+# Versão: 0.1-beta 04/01/2022
+# Sobre: Alternativa ao pidof escrito em shell
+# License: BSD-3-Clause License
+#------------------------------------------------------------------
+
+# Modo pid unico
+single="false"
+# Modo exibir nomes
+e_names="false"
+
+# Testa todos os argumentos passados
+while [ -n "${1}" ];do
+	for cmdline in $(printf '%s\n' /proc/[0-9]*/cmdline);do
+		# Não exibe o script atual " $0 "
+		grep -q "${0}" "${cmdline}" 2>/dev/null && continue
+		grep -q "${1}" "${cmdline}" 2>/dev/null
+		c_exit=$?
+		# Prepara a lista com os PIDs
+		[ $c_exit == 0 ] && {
+			l_pids="$(printf '%s' "${cmdline//[$'\/proc\/cmdline']}") ${l_pids}"
+			[ "${single}" == "true" ] && break
+		}
+	done
+	[ "${e_names}" == "true" ] && p_name="${1} "
+	[ -z "${l_pids}" ] || printf '%s\n' "${p_name}${l_pids}"
+	shift && l_pids=""
+done
