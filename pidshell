@@ -19,7 +19,7 @@ while [ -n "${1}" ];do
 	for cmdline in $(printf '%s\n' /proc/[0-9]*/cmdline);do
 		# Não exibe o script atual " $0 "
 		grep -q "${0}" "${cmdline}" 2>/dev/null && continue
-		grep -q "${1}" "${cmdline}" 2>/dev/null
+		grep -iq "${1}" "${cmdline}" 2>/dev/null
 		c_exit=$?
 		# Prepara a lista com os PIDs
 		[ $c_exit == 0 ] && {
