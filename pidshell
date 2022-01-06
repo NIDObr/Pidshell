@@ -17,6 +17,7 @@ e_names="false"
 # Testa todos os argumentos passados
 while [ -n "${1}" ];do
 	for cmdline in $(printf '%s\n' /proc/[0-9]*/cmdline);do
+		# Removido o grep para melhorar a performance
 		file_in="$(cat -A "${cmdline}" 2>/dev/null | tr '^@' ' ')"
 		case "${file_in^^}" in
 			# Não exibe o script atual " $0 "
