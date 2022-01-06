@@ -4,7 +4,7 @@
 # Autor: NidoBr
 # Mais: < https://github.com/NIDObr >
 # Email: coqecoisa@gmail.com
-# Versão: 0.1-beta 04/01/2022
+# Versão: 0.2-beta 06/01/2022
 # Sobre: Alternativa ao pidof escrito em shell
 # License: BSD-3-Clause License
 #------------------------------------------------------------------
@@ -16,19 +16,15 @@ e_names="false"
 
 # Testa todos os argumentos passados
 while [ -n "${1}" ];do
-	for cmdline in $(printf '%s\n' /proc/[0-9]*/cmdline);do
-		# Removido o grep para melhorar a performance
+	for cmdline in /proc/[0-9]*/cmdline;do
 		file_in="$(cat -A "${cmdline}" 2>/dev/null | tr '^@' ' ')"
 		case "${file_in^^}" in
 			# Não exibe o script atual " $0 "
 			*${0^^}*)continue;;
 			*${1^^}*)
-				c_exit=$?
 				# Prepara a lista com os PIDs
-				[ $c_exit == 0 ] && {
-					l_pids="$(printf '%s' "${cmdline//[$'\/proc\/cmdline']}") ${l_pids}"
-					[ "${single}" == "true" ] && break
-				}
+				l_pids="${cmdline//[$'\/proc\/cmdline']} ${l_pids}"
+				[ "${single}" == "true" ] && break
 			;;
 		esac
 	done
@@ -37,9 +33,8 @@ while [ -n "${1}" ];do
 		exit_code=1
 	} || {
 		printf '%s\n' "${p_name}${l_pids}"
-		exit_code=0
 	}
 	shift && l_pids=""
 done
 # Retorna verdadeiro apenas se todos os programas especificados estiverem sendo executados.
-exit "${exit_code}"
+exit "${exit_code:-0}"
