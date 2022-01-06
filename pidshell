@@ -17,15 +17,19 @@ e_names="false"
 # Testa todos os argumentos passados
 while [ -n "${1}" ];do
 	for cmdline in $(printf '%s\n' /proc/[0-9]*/cmdline);do
-		# Não exibe o script atual " $0 "
-		grep -q "${0}" "${cmdline}" 2>/dev/null && continue
-		grep -iq "${1}" "${cmdline}" 2>/dev/null
-		c_exit=$?
-		# Prepara a lista com os PIDs
-		[ $c_exit == 0 ] && {
-			l_pids="$(printf '%s' "${cmdline//[$'\/proc\/cmdline']}") ${l_pids}"
-			[ "${single}" == "true" ] && break
-		}
+		file_in="$(cat -A "${cmdline}" 2>/dev/null | tr '^@' ' ')"
+		case "${file_in^^}" in
+			# Não exibe o script atual " $0 "
+			*${0^^}*)continue;;
+			*${1^^}*)
+				c_exit=$?
+				# Prepara a lista com os PIDs
+				[ $c_exit == 0 ] && {
+					l_pids="$(printf '%s' "${cmdline//[$'\/proc\/cmdline']}") ${l_pids}"
+					[ "${single}" == "true" ] && break
+				}
+			;;
+		esac
 	done
 	[ "${e_names}" == "true" ] && p_name="${1} "
 	[ -z "${l_pids}" ] && {
