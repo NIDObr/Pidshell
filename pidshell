@@ -16,7 +16,7 @@ e_names="false"
 
 # Testa todos os argumentos passados
 while [ -n "${1}" ];do
-	for cmdline in $(grep -il "${1}" /proc/[0-9]*/cmdline &>/dev/fd/1);do
+	for cmdline in $(grep -il "${1}" /proc/[0-9]*/cmdline);do
 #	for cmdline in /proc/[0-9]*/cmdline;do
 		file_in="$(cat -A "${cmdline}" 2>/dev/null | tr '^@' ' ')"
 		case "${file_in^^}" in
