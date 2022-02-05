@@ -1,7 +1,7 @@
 # Pidshell
 ### Alternativa ao pidof, escrito em shell
 
-### Para usar só precisa passa o nome de um ou mais programas como parametro. Ex:
+### Para usar só precisa passar o nome de um ou mais programas como parametro. Ex:
 ### $ pidshell firefox
 ### ou
 ### $ pidshell firefox discord
